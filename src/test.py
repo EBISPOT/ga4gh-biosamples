@@ -8,44 +8,29 @@
 import json
 import requests
 from biosample import Biosample
+from entity import Entity
+from mapFromBiosampleToGA4GH import mapsBioSampletoGA4GH
 
 #group query
 #response = requests.get('http://www.ebi.ac.uk/biosamples/api/groups/SAMEG82620')
 
-#sample query SAME1597591
+#sample query SAME1597591, SAMEA4195741
 #for now let's deal with samples only
-response = requests.get('http://www.ebi.ac.uk/biosamples/api/samples/SAME1597591')
+response = requests.get('http://www.ebi.ac.uk/biosamples/api/samples/SAMEA4195741')
 data = response.json()
 
-sample = Biosample()
+#print data["accession"]
+
+# for key, value in data.items():
+# 	print key, value
 
 
-for key, value in data.items():
-     #print key, value
-     sample.id = data["accession"]
-     sample.description =  data["description"]
-     sample.characteristics = data["characteristics"]
-    # print "biosample description is: " + str(biosample.description)
-     sample.created = data["releaseDate"]
-     sample.updated = data["updateDate"]
+sample = mapsBioSampletoGA4GH(data)
 
-#print sample.entity_type()
-print sample.characteristics.keys()
-print sample.characteristics.values()
+for key, value in sample.characteristics['sampleSource'].items():
+	print "sampleSource " + key, value
 
-for item in sample.characteristics.values():
-	  print item
-
-    #     self.id = id
-    # self.name = name
-    # self.description = description
-    # self.characteristics = characteristics
-    # self.created = created
-    # self.updated = updated
-    # self.info = info
-    #print data['description']
-
-    #print('{} {}'.format(item['id'], item['summary']))
-
-
-#print data
+for key, value in sample.characteristics['phenotype'].items():
+	print "Phenotype " + key, value
+for key, value in sample.characteristics['disease'].items():
+	print "Disease " + key, value
