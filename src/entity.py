@@ -11,13 +11,13 @@ class Entity(object):
 
     def __init__(self, id, name, description, characteristics, info, created="", updated=""):
         """Return an Entity object"""
-        self.id = id
-        self.name = name
-        self.description = description
-        self.characteristics = characteristics
-        self.created = created and created or self.created_date()
-        self.updated = updated or updated or self.updated_date()
-        self.info = info
+        self.id = id or ""
+        self.name = name or ""
+        self.description = description or ""
+        self.characteristics = characteristics or []
+        self.created = created or self.created_date()
+        self.updated = updated or self.updated_date()
+        self.info = info or []
 
 
     def created_date(self):
