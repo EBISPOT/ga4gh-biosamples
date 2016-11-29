@@ -41,15 +41,16 @@ def mapsBioSampletoGA4GH (data):
 
 	sampleSourcelist = ["hostBodyProduct","organismPart","sampleSourceName","strain","material","sourceName","bodysite","originalBodySiteAnnotation","hostBodySite","sampleType","environmentMaterial","biosourcetype","bodyProduct","bodySite","envMaterial"]
 
-	phenotypeList = ["Organism","host","Species","cellType","hostTaxid","hostCommonName","specificHost","taxonId","hostScientificName","hostTaxonomyId","hostTissueSampled","subSpecies","sex","hostSex","hostAge","ageYears","age","ageY"]
+	phenotypeList = ["Organism","organism","host","Species","cellType","hostTaxid","hostCommonName","specificHost","taxonId","hostScientificName","hostTaxonomyId","hostTissueSampled","subSpecies","sex","hostSex","hostAge","ageYears","age","ageY"]
 
 	diseaseList = ["diseaseState","hostDisease","clinicallyAffectedStatus","condition","diagnosis","infection","diseaseStatus","clinicalinformation","healthState","disease","clinicalInformation","hostHealthState","status","affectedBy","clinicalhistory","tumor","causeOfDeath"]
 
 	try:
 		biocharacteristicSource = []
-		for key, value in data["characteristics"].items():
+		for key, value in list(data["characteristics"].items()):
 			if key in sampleSourcelist:
-				for s in data["characteristics"][key]:
+				#print ("Found sample key: ", key)
+				for s in list(data["characteristics"][key]):
 					biocharacteristicDict = {} #create an empty dict to store the content of the key found for phenotype
 					biocharacteristicDict['termLabel'] = s["text"]
 					if "ontologyTerms" in s:
@@ -61,9 +62,11 @@ def mapsBioSampletoGA4GH (data):
 
 	try:
 		biocharacteristicPhenotype = []
-		for key, value in data["characteristics"].items(): #we browse the data list, and check whether we find something of interest
+		for key, value in list(data["characteristics"].items()): #we browse the data list, and check whether we find something of interest
+			#print ("existing phenotype keys: ", key)
 			if key in phenotypeList: #we found a phenotype
-				for s in data["characteristics"][key]: # get the values from the phenotype
+				#print ("Found phenotype key: ", key)
+				for s in list(data["characteristics"][key]): # get the values from the phenotype
 					biocharacteristicDict = {} #create an empty dict to store the content of the key found for phenotype
 					biocharacteristicDict['termLabel'] = s["text"]
 					if "ontologyTerms" in s:
@@ -75,9 +78,10 @@ def mapsBioSampletoGA4GH (data):
 
 	try:
 		biocharacteristicDisease = []
-		for key, value in data["characteristics"].items():
+		for key, value in list(data["characteristics"].items()):
 			if key in diseaseList:
-				for s in data["characteristics"][key]:
+				#print ("Found disease key: ", key)
+				for s in list(data["characteristics"][key]):
 					biocharacteristicDict = {} #create an empty dict to store the content of the key found 
 					biocharacteristicDict['termLabel'] = s["text"]
 					if "ontologyTerms" in s:
