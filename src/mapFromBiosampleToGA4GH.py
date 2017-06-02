@@ -18,21 +18,62 @@ def createBiocharacteristic(data,interestList,characteristicLabel):  #data, phen
 	except Exception:
 		pass
 
+
 def mapsBioSampletoGA4GH (data):
+	"""Generate GA4GH Biosample representation from EBI Biosamples data."""
 
-	# #we need to check the values of data exist or we need to give a default value
-	# accession = data["accession"]
-	# description = data["description"]
-	# characteristics = data["characteristics"]
-	# organization = data["organization"]
+	# Get all top-lvel keys from json response
+	data_keys = data.keys()
 
-	#we use the accession as the name of the sample as well
-	#TODO : add check for cases in whihc an attribute doesn't exist, e.g., data["organization"]
-	sample = Biosample(data["accession"], data["accession"], data["description"], data["characteristics"], data["description"])
+	# Additional attributes found in EBI Biosamples but with no direct mapping to GA4GH
+	info = []
+
+	# Check if Biosamples response contains attributes that map to GA4GH
+	# Accession
+	if 'accession' in data_keys:
+		id = data["accession"]
+		name = data['accession']
+		data_keys.remove('accession')
+
+	# Description
+	if "description" in data_keys:
+		description = data["description"]
+		data_keys.remove('description')
+	else:
+		description = "null"
+
+	# Characteristics
+	if "characteristics" in data_keys:
+		characteristics = data["characteristics"]
+		data_keys.remove('characteristics')
+
+	# Release Date
+	if "releaseDate" in data_keys:
+		created = data["releaseDate"]
+		data_keys.remove('releaseDate')
+	else:
+		created = "1974-07-04"  # date EMBL became a legal entity, use ISO 8601 format of YYYY-MM-DD
+
+	# Updated Date
+	if "updateDate" in data_keys:
+		updated = data["updateDate"]
+		data_keys.remove('updateDate')
+	else:
+		updated = "1974-07-04"
+
+	# Addititional attributes 
+	additional_attributes = {}
+	for key in data_keys:
+		if key != '_links':
+			additional_attributes[key] = data[key]
+	info.append(additional_attributes)
 
 
-	#print data["accession"]
+	# create Biosample object: id, name, description, characteristics, info, created, updated
+	sample = Biosample(id, name, description, characteristics, info, created, updated)
+	print "** SAMPLE: ", sample.id, "\n** CHAR: ", sample.characteristics
 
+	
 	#sample.characteristics is itself an array of arrays. It contains information about alleleName, geneName, material, alleleId, strain, geneSymbol, organism, geneId, alleleSymbol
 	#each of those need to be parsed and mapped
 
